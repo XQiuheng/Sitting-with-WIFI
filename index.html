@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>NYC WIFI Map</title>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css?family=Lato|Major+Mono+Display|Staatliches" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<button id="about" class='button-default'><i class="fas fa-film"></i>&nbsp; About</button>
+
+<div id="map"></div>
+<div class='modal'>
+    <h2 class='modal-title'>About this map</h2>
+    <div class='modal-body'><p>Are you feeling tired after a long walk in big city like New York? Do you want to sit down and play with your cell phone? This map will tell you which public seats have the best WiFi signals.  <br> <br> Data Provided by <a href="https://opendata.cityofnewyork.us/">New York City Open Data</a>  <br> Visualized by <a href='mailto:qx6kp@virginia.edu'>Qiuheng Xu</a> <br>Instructed by Andrea Hansen
+    </p></div>
+    <img class='img' src="wifi.jpg" alt="filmsf">
+    <button class='close-button'>&times;</button>
+</div>
+<div id="screen"></div>
+    
+<div class='map-overlay' id='legend'></div>
+
+<div class='map-overlay' id='info-window'>
+    <div>
+        <h2>Sitting with WiFi</h2>
+    </div>
+</div>
+
+<div class='map-overlay' id='more-info'></div>
+
+ 
+      <!-- Map legend (populated by javascript code) -->
+      <div id='legend'></div>
+      <!-- color change selector -->
+ <div class='map-overlay' id='color-changer'>
+    <div>
+      <label>Hotspot:</label>
+      <div id='swatches'></div>
+    </div>
+  </div>
+  <!-- Layers control (populated by javascript code) -->
+  <div id='layers-control'></div>
+
+      <!-- Reset Map button -->
+      <button id="reset" class='button-default'><i class="fas fa-redo"></i></i>&nbsp;Reset map</button>
+    </div>
+  </div>
+
+<div class='opacity-ctrl'>
+        <label>Public Seats Heatmap</label>
+        <input id='slider' type='range' min='0' max='100' step='0' value='50' />
+    </div>
+</div>
+
+
+
+</body>
+<script src="map.js"></script>
+</html>
