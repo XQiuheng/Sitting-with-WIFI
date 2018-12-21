@@ -165,12 +165,13 @@ map.on('load', function() {
     });
 });
 
-$("#reset").click(function() {
+
+    $("#reset").click(function() {
         map.setCenter(mapCenter);
         map.setZoom(mapZoom);
         map.setPitch(0);
         map.setBearing(0);
-        map.setFilter("cville-building-permits", null); // reset building permits filters
+        map.setFilter("Public-Seats", null); // reset building permits filters
         
         // Reset all layers to visible
         for (i=0; i<layers.length; i++) {
@@ -179,6 +180,7 @@ $("#reset").click(function() {
         }                   
 
     });
+
 // Timeline labels using d3
 
     var width = 500;
@@ -215,7 +217,7 @@ $("#reset").click(function() {
 
         // Get all data from a layer using queryRenderedFeatures
         var Installati = map.queryRenderedFeatures(null, { // when you send "null" as the first argument, queryRenderedFeatures will return ALL of the features in the specified layers
-            layers: ["Public Seats"]
+            layers: ["Public Seats Heatmap"]
         });
 
         var InstallatiDatesArray = [];
