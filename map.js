@@ -27,7 +27,7 @@ map.on('mousemove', function(e) {   // Event listener to do some code when the m
         
         if (wifinyc.length > 0) {   // if statement to make sure the following code is only added to the info window if the mouse moves over a state
 
-            $('#more-info').html('<h3><strong>' + "&lt;" + wifinyc[0].properties.NTANAME + "&gt;" + '</strong></h3>' +  '<p>' + wifinyc[0].properties.Provider + '</p>' + '<p>' + wifinyc[0].properties.Type + '</p>' + '<p>' + wifinyc[0].properties.ProductionCompany + '</p>');
+            $('#more-info').html('<h3><strong>' + "&lt;" + wifinyc[0].properties.Remarks + "&gt;" + '</strong></h3>' +  '<p>' + wifinyc[0].properties.Provider + '</p>' + '<p>' + wifinyc[0].properties.Type + '</p>' + '<p>' + wifinyc[0].properties.Location + '</p>');
 
         } else {    // what shows up in the info window if you are NOT hovering over a park
 
@@ -147,70 +147,7 @@ map.on('mousemove', function(e) {   // Event listener to do some code when the m
     });
 
 
-// var layerIDs = []; // Will contain a list used to filter against.
 
-// var filterInput = document.getElementById('filter-input');
-
-// var actors = []
-// var actorsLowerCase = [];
-
-// map.on('load', function() {
-
-//     var filmLocations = map.queryRenderedFeatures({    
-//         layers: ['film-locations copy']    
-//     });
-
-//     for (i=0; i<filmLocations.length; i++) {
-//         actors.push(filmLocations[i].properties.Actor1);
-//         actors.push(filmLocations[i].properties.Actor2);
-//         actors.push(filmLocations[i].properties.Actor3);
-
-//         actorsLowerCase.push(filmLocations[i].properties.Actor1.toLowerCase());
-//         actorsLowerCase.push(filmLocations[i].properties.Actor2.toLowerCase());
-//         actorsLowerCase.push(filmLocations[i].properties.Actor3.toLowerCase());
-//     }
-//     console.log(actors);
-    
-//     // add event listener for the search box
-//     filterInput.addEventListener('keyup', function(e) {
-//         // If the input value matches a layerID set
-//         // it's visibility to 'visible' or else hide it.
-//         var value = e.target.value.trim().toLowerCase();
-//         var indices = [];
-
-//         var matches = actorsLowerCase.filter(function(searchValue, i){
-//             if(searchValue) {
-//                 if (searchValue.indexOf(value) >= 0) {
-//                     indices.push(i);
-//                 }
-//             }
-//         }); 
-
-
-//         if (value != "") {
-//             for (i=0; i<indices.length; i++) {
-            
-//                 var actorsIndex = indices[i];
-
-//                 map.setFilter('film-locations copy', [
-//                     "any",
-//                     ["==", "Actor1", actors[actorsIndex]],
-//                     ["==", "Actor2", actors[actorsIndex]],
-//                     ["==", "Actor3", actors[actorsIndex]]
-//                 ]);
-
-//             }    
-//         } else {
-//             map.setFilter('film-locations copy', null);
-//         }
-        
-
-//         layerIDs.forEach(function(layerID) {
-//             map.setLayoutProperty(layerID, 'visibility',
-//                 layerID.indexOf(value) > -1 ? 'visible' : 'none');
-//         });
-//     });
-// });
 
 var slider = document.getElementById('slider');
 var sliderValue = document.getElementById('slider-value');
@@ -242,4 +179,81 @@ $("#reset").click(function() {
         }                   
 
     });
+// Timeline labels using d3
+
+    var width = 500;
+    var height = 25;
+    var marginLeft = 15;
+    var marginRight = 15;
+
+    var data = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018];
+    
+    // Append SVG 
+    var svg = d3.select("#timeline-labels")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    // Create scale
+    var scale = d3.scaleLinear()
+                  .domain([d3.min(data), d3.max(data)])
+                  .range([marginLeft, width-marginRight]); 
+
+    // Add scales to axis
+    var x_axis = d3.axisBottom()
+                   .scale(scale)
+                   .tickFormat(d3.format("d"));  // Formats number as a date, e.g. 2008 instead of 2,008 
+
+    //Append group and insert axis
+    svg.append("g")
+       .call(x_axis);
+
+// Timeline map filter (timeline of building permit issue dates)
+    
+    // Create array of  dates from Mapbox layer (in this case, Charlottesville Building Permit application dates)
+    map.on('load', function () {
+
+        // Get all data from a layer using queryRenderedFeatures
+        var Installati = map.queryRenderedFeatures(null, { // when you send "null" as the first argument, queryRenderedFeatures will return ALL of the features in the specified layers
+            layers: ["Public Seats"]
+        });
+
+        var InstallatiDatesArray = [];
+        var InstallatiYearsArray = [];
+
+        // push the values for a certain property to the variable declared above (e.g. push the permit dates to a permit date array)
+        for (i=0; i<Installati.length; i++) {
+            var InstallatiDate = Installati[i].properties.AppliedDat;
+            // The format of the date in this layer is a long string in the format "2012-10-19T04:00:00.000Z", and we are just looking for the 4-digit year, so the following line will trim each value in the array to just the first 4 characters.
+            var InstallatiYear = InstallatiDate.substring(0, 4);
+            
+            InstallatiDatesArray.push(InstallatiDate);    // Replace "AppliedDat" with the field you want to use for the timeline slider
+            InstallatiYearsArray.push(InstallatiYear);
+        }
+
+        // Create event listener for when the slider with id="timeslider" is moved
+        $("#timeslider").change(function(e) {
+            var year = this.value; 
+            var indices = [];
+
+            // Find the indices in the permitDatesArray array where the year from the time slider matches the year of the permit application
+            var matches = InstallatiDatesArray.filter(function(item, i){
+                if (item.indexOf(year) >= 0) {
+                    indices.push(i);
+                }
+            });
+
+            // create filter 
+            var newFilters = ["any"];
+            
+            for (i=0; i<indices.length; i++) {
+                var filter = ["==","AppliedDat", InstallatiDatesArray[indices[i]]];
+                newFilters.push(filter);
+            }
+
+            map.setFilter("Public Seats Heatmap", newFilters);
+        });
+
+    });
+
 
